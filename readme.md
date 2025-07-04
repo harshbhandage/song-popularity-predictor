@@ -29,7 +29,7 @@ Users can input features like danceability, energy, valence, and instantly get a
 ---
 
 ### 🎯 Prediction Page UI
-<img src="static/ui_preview.png" width="600"/>
+<img src="Screenshot_Ui.png" width="600"/>
 
 ---
 
