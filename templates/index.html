@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Song Popularity Predictor</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <style>
+        .value-label {
+            font-size: 0.9em;
+            color: #1DB954;
+            float: right;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🎵 Song Popularity Predictor</h1>
+        <form action="/predict" method="POST">
+            <input type="text" name="artist_name" placeholder="Artist Name (Optional)">
+            <input type="text" name="track_name" placeholder="Track Name (Optional)">
+
+            {% set sliders = ['acousticness', 'danceability', 'energy', 'instrumentalness', 'liveness', 'speechiness', 'valence'] %}
+            {% for slider in sliders %}
+                <label>{{ slider.capitalize() }}: 
+                    <span id="{{ slider }}_val" class="value-label">0.5</span>
+                </label>
+                <input type="range" name="{{ slider }}" min="0" max="1" step="0.01" value="0.5"
+                       oninput="document.getElementById('{{ slider }}_val').innerText = this.value">
+            {% endfor %}
+
+            <label>Key</label>
+            <select name="key">
+                {% for i in range(12) %}
+                    <option value="{{ i }}">{{ i }}</option>
+                {% endfor %}
+            </select>
+
+            <label>Mode</label>
+            <select name="mode">
+                <option value="1">Major</option>
+                <option value="0">Minor</option>
+            </select>
+
+            <label>Time Signature</label>
+            <select name="time_signature">
+                {% for i in [1, 3, 4, 5, 6, 7] %}
+                    <option value="{{ i }}">{{ i }}/4</option>
+                {% endfor %}
+            </select>
+
+            <label>Genre</label>
+            <select name="genre">
+                {% for g in genre_labels %}
+                    <option value="{{ g[1] }}">{{ g[0] }}</option>
+                {% endfor %}
+            </select>
+
+            <input type="number" name="duration_ms" placeholder="Duration (ms)" required>
+            <input type="number" name="loudness" step="any" placeholder="Loudness (dB)" required>
+            <input type="number" name="tempo" step="any" placeholder="Tempo (BPM)" required>
+
+            <button type="submit">🎧 Predict Popularity</button>
+        </form>
+
+        {% if prediction_text %}
+            <p class="result">{{ prediction_text }}</p>
+        {% endif %}
+
+        {% if artist_name or track_name %}
+            <p class="info">Track: <strong>{{ track_name }}</strong> by <strong>{{ artist_name }}</strong></p>
+        {% endif %}
+    </div>
+
+    <script>
+        // Set slider display values on page load
+        window.onload = function() {
+            const sliders = ['acousticness', 'danceability', 'energy', 'instrumentalness', 'liveness', 'speechiness', 'valence'];
+            sliders.forEach(id => {
+                const input = document.querySelector(`input[name='${id}']`);
+                const label = document.getElementById(`${id}_val`);
+                if (input && label) {
+                    label.innerText = input.value;
+                }
+            });
+        }
+    </script>
+</body>
+</html>
